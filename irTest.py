@@ -1,5 +1,29 @@
 #!/usr/bin/env python3
 from lirc import RawConnection
+from time import sleep
+import spidev
+
+def createSPI(device):
+    spi = spidev.SpiDev()
+    spi.open(0, device)
+    spi.max_speed_hz = 1000000
+    spi.mode = 0
+    return spi
+
+bus = 0
+device = 0
+lcdspi = spidev.SpiDev()
+lcdspi.open(bus,device)
+lcdspi.max_speed_hz = 1000000
+lcdspi.mode = 0
+
+device1 = 1
+motorspi = spidev.SpiDev()
+motorspi.open(0, device1)
+motorspi.max_speed_hz = 1000000
+motorspi.mode = 0
+
+
 
 def ProcessIRRemote():
 
@@ -21,13 +45,26 @@ def ProcessIRRemote():
            return
         
         print(command)        
-            
+           
+    return keypress
 
 #define Global
 conn = RawConnection()
 
 print("Starting Up...")
+num = 1
 
 while True:         
 
-      ProcessIRRemote()
+    output = ProcessIRRemote()
+    #lcdSPI = createSPI(0);
+    if (output != ""):
+        print(output)
+        num = 1
+        num1 = num
+        num1 = int(num1)
+        num = int(num)
+        motorspi.writebytes([num1])
+        lcdspi.writebytes([num])
+
+
